@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+    nodeserver:
+      build:
+        context: ../app
+      ports:
+        - "3000:3000"
+
+    app:
+      build:
+        context: ../nginx-sample
+      ports:
+        - "3001:3001"
+
+    nginx:
+      image: nginx:alpine
+      volumes:
+        - ./reverse-proxy.conf:/etc/nginx/conf.d/default.conf
+      restart: always
+      depends_on:
+        - app
+        - nodeserver
+      ports:
+        - "80:80"
+
+networks:
+  default:
+    name: app-net
+    external: true
